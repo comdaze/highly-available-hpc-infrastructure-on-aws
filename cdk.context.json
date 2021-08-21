@@ -1,0 +1,7 @@
+{
+  "availability-zones:account=456370280007:region=cn-north-1": [
+    "cn-north-1a",
+    "cn-north-1b",
+    "cn-north-1d"
+  ]
+}
