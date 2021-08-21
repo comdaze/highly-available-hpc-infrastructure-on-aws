@@ -1,8 +1,9 @@
-Blog post link: https://aws.amazon.com/blogs/hpc/highly-available-hpc-infrastructure-on-aws
-
 # HPC infrastructure with EnginFrame, AWS ParallelCluster, and Amazon Aurora
 
-The solution proposed in this blog post is designed to simplify the process of setting up and running high performance computing applications on on-demand cluster on AWS cloud; it is deployed using the AWS Cloud Developer Kit (AWS CDK), a software development framework for defining cloud infrastructure in code and provisioning it through AWS CloudFormation, hiding the complexity of integration between the components.
+本方案代码适用于AWS中国区域部署，提出的解决方案旨在简化在AWS云的按需集群上设置和运行高性能计算应用的过程；实现了跨可用区的高性能计算的高可用。它的部署使用了AWS云开发者工具包（AWS CDK），这是一个软件开发框架，用于在代码中定义云基础设施，并通过AWS CloudFormation进行配置，隐藏了组件之间集成的复杂性。
+该方案基于链接: https://aws.amazon.com/blogs/hpc/highly-available-hpc-infrastructure-on-aws
+和适用用于AWS Global区域的代码：https://github.com/aws-samples/enginframe-aurora-serverless
+
 
 The components includes:
 
@@ -49,11 +50,3 @@ $ python3 -m pip install -r requirements.txt
 $ cdk bootstrap aws://<account>/<region>
 $ cdk deploy VPC AuroraServerless EFS FSX ALB EnginFrame
 ```
-
-## Security
-
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-## License
-
-This library is licensed under the MIT-0 License. See the LICENSE file.
