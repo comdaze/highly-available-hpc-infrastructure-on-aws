@@ -115,9 +115,10 @@ $ cdk deploy VPC AuroraServerless EFS FSX ALB EnginFrame
 - /fsx_cluster1和/fsx_cluster2是相关集群的高性能文件系统，可用于包含你的抓取和输入输出文件。
 部署完成后，注意应用负载平衡器的URL地址。下面是一个输出的例子。
 
-输出:
 ```
-EnginFrame.EnginFramePortalURL = https://ALB-EFLB1F2-Z3O8UAW7P443-1634659638.eu-west-1.elb.amazonaws.com
+Outputs:
+EnginFrame.EnginFramePortalURL = https://ALB-EFLB1F2-TJNAWWLF3LFT-1892922852.cn-north-1.elb.amazonaws.com.cn
 ```
-这个地址将被用来访问EnginFrame门户。
+这个地址将被用来访问EnginFrame门户。  
+
 ![EnginFrame门户](/ha-hpc-efportal.png "EnginFrame门户")
