@@ -2,6 +2,8 @@
 
 本方案代码**适用于AWS中国区域部署**，提出的解决方案旨在简化在AWS云的按需集群上设置和运行高性能计算应用的过程；实现了跨可用区的高性能计算的高可用。它的部署使用了AWS云开发者工具包（AWS CDK），这是一个软件开发框架，用于在代码中定义云基础设施，并通过AWS CloudFormation进行配置，隐藏了组件之间集成的复杂性。
 
+值的注意的地方**enginframe目前只支持x86架构实例**，ARM架构暂未支持，所以整套方案都是部署在x86架构的实例上。
+
 该方案基于[这篇博客](https://aws.amazon.com/blogs/hpc/highly-available-hpc-infrastructure-on-aws)，并参考适用用于[AWS Global区域的代码](https://github.com/aws-samples/enginframe-aurora-serverless)
 
 以下包括该解决方案的主要组成部分。
@@ -84,7 +86,44 @@ app.synth()
   - fsx_size：Lustre卷的FSx的大小。
   - jdbc_driver_link：用于下载MySQL JDBC驱动程序的链接。MySQL社区下载包含最新版本。需要的版本是独立于TAR存档平台的版本。
   - pcluster_version：环境中安装的AWS ParallelCluster版本。该解决方案已经用2.10.3版本进行了测试。
-- enginframe_aurora_serverless目录包含用于部署所需资源的类文件。其中[aurora_serverless.py](/enginframe_aurora_serverless/aurora_serverless.py)改动较大，原方案采用Aurora Serverless，由于AWS中国区还未发布，所以改成兼容MySQL的Aurora实例数据库集群。
+- enginframe_aurora_serverless目录包含用于部署所需资源的类文件。其中[aurora_serverless.py](/enginframe_aurora_serverless/aurora_serverless.py)改动较大，原方案采用Aurora Serverless，由于AWS中国北京区还未发布，所以如果在北京区域部署改成兼容MySQL的Aurora实例数据库集群，如下CDK代码：  
+```
+        db_cluster_name = "aurora-serverless-db"
+        self.db = rds.DatabaseCluster(
+            self,
+            id="AuroraServerlessDB",
+            credentials=rds.Credentials.from_generated_secret("admin"),
+            engine=rds.DatabaseClusterEngine.aurora_mysql(version=rds.AuroraMysqlEngineVersion.VER_2_09_0),
+            cluster_identifier=db_cluster_name,
+            default_database_name="enginframedb",
+            
+            subnet_group=subnet_group,
+            removal_policy=core.RemovalPolicy.DESTROY,
+            instance_props={
+                # optional , defaults to t3.medium
+                "instance_type": ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL),
+                "security_groups": [security_group],
+                "vpc_subnets": {
+                   "subnet_type": ec2.SubnetType.PRIVATE
+                },
+                "vpc": vpc
+            }    
+        )
+```
+如果部署在宁夏区域，可以采用Aurora ServerLess, CDK代码如下
+```
+        self.db = rds.ServerlessCluster(
+            self,
+            id="AuroraServerlessDB",
+            vpc=vpc,
+            engine=rds.DatabaseClusterEngine.AURORA_MYSQL,
+            cluster_identifier=db_cluster_name,
+            default_database_name="enginframedb",
+            security_groups=[security_group],
+            subnet_group=subnet_group,
+            removal_policy=core.RemovalPolicy.DESTROY
+        )
+```
 - lambda/cert.py是用于创建应用负载平衡器证书的Lambda函数。
 - lambda_destroy_pcluster/destroy.py是用于在删除堆栈时销毁AWS ParallelCluster集群的Lambda函数。
 - 用户数据目录包含用于配置HPC环境的脚本。
