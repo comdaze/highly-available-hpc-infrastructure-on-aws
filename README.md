@@ -110,7 +110,7 @@ app.synth()
             }    
         )
 ```
-如果部署在宁夏区域，可以采用Aurora ServerLess, CDK代码如下
+如果部署在宁夏区域，可以采用Aurora Serverless, CDK代码如下
 ```
         self.db = rds.ServerlessCluster(
             self,
